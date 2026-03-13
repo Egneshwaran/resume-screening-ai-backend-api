@@ -22,6 +22,10 @@ public class Resume {
     @JoinColumn(name = "job_id")
     private Job job;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     private String filename;
     
     private String filePath;
@@ -44,6 +48,8 @@ public class Resume {
     private boolean isResumeBank = false;
 
     private LocalDateTime uploadedAt;
+
+    private String fileUrl;
 
     @PrePersist
     protected void onCreate() {

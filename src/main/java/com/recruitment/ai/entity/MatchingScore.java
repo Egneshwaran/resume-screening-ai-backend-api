@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "matching_scores")
@@ -25,6 +26,10 @@ public class MatchingScore {
     @JoinColumn(name = "resume_id")
     private Resume resume;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     private Double totalScore; // 0 to 100
 
     private Double skillMatchScore;
@@ -43,4 +48,11 @@ public class MatchingScore {
     private String explanation; // For XAI
 
     private String status; // SHORTLISTED, REJECTED, PENDING
+
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 }

@@ -37,6 +37,10 @@ public class Job {
     private Integer experienceWeight;
     private Integer descriptionWeight;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     private LocalDateTime createdAt;
 
     @PrePersist

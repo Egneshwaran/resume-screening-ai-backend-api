@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "subscriptions")
@@ -19,7 +20,7 @@ public class Subscription {
     private Long id;
 
     @Column(nullable = false)
-    private Long userId;
+    private UUID userId;
 
     private String planName;
     private String status; // ACTIVE, EXPIRED, CANCELLED

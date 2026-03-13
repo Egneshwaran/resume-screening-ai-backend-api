@@ -17,6 +17,10 @@ public class Settings {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     // 1. Screening Threshold Settings
     @Builder.Default
     private int highPotentialThreshold = 85;
