@@ -5,7 +5,6 @@ import com.recruitment.ai.entity.MatchingScore;
 import com.recruitment.ai.entity.Resume;
 import com.recruitment.ai.repository.MatchingScoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -20,8 +19,7 @@ public class MatchingService {
     @Autowired
     private MatchingScoreRepository matchingScoreRepository;
 
-    @Value("${ai.engine.url}")
-    private String AI_ENGINE_URL;
+
 
     public MatchingScore rankResumeForJob(Job job, Resume resume) {
         RestTemplate restTemplate = new RestTemplate();
@@ -41,14 +39,8 @@ public class MatchingService {
             ParameterizedTypeReference<Map<String, Object>> responseType = new ParameterizedTypeReference<Map<String, Object>>() {
             };
 
-            // Ensure the URL has /process suffix if it's not already there
-            String url = AI_ENGINE_URL;
-            if (!url.endsWith("/process")) {
-                url = url.endsWith("/") ? url + "process" : url + "/process";
-            }
-
             Map<String, Object> response = restTemplate.exchange(
-                    url,
+                    "http://localhost:8000/process",
                     HttpMethod.POST,
                     new HttpEntity<>(request),
                     responseType).getBody();
@@ -67,12 +59,12 @@ public class MatchingService {
                     .matchedSkills((String) response.get("matched_skills"))
                     .missingSkills((String) response.get("missing_skills"))
                     .explanation((String) response.get("explanation"))
-                    .status("COMPLETED")
+                    .status("PENDING")
                     .build();
 
             return matchingScoreRepository.save(score);
         } catch (Exception e) {
-            e.printStackTrace(); 
+            e.printStackTrace(); // Added for visibility in logs
             throw new RuntimeException("AI Screening Failed: " + e.getMessage());
         }
     }
