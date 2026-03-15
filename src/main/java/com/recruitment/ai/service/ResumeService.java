@@ -2,6 +2,7 @@ package com.recruitment.ai.service;
 
 import com.recruitment.ai.entity.Job;
 import com.recruitment.ai.entity.Resume;
+import com.recruitment.ai.entity.User;
 import com.recruitment.ai.repository.JobRepository;
 import com.recruitment.ai.repository.MatchingScoreRepository;
 import com.recruitment.ai.repository.ResumeRepository;
@@ -38,8 +39,7 @@ public class ResumeService {
     private final String uploadDir = "uploads/resumes/";
 
     @Transactional
-    public Resume saveResume(MultipartFile file, Long jobId, boolean isResumeBank) throws IOException {
-        // ... (rest of the method)
+    public Resume saveResume(MultipartFile file, Long jobId, boolean isResumeBank, User user) throws IOException {
         Job job = jobRepository.findById(jobId).orElse(null);
         Path path = Paths.get(uploadDir);
         if (!Files.exists(path)) {
@@ -57,6 +57,7 @@ public class ResumeService {
                 .filePath(filePath.toString())
                 .rawText(rawText)
                 .job(job)
+                .user(user)
                 .isResumeBank(isResumeBank)
                 .build();
 
@@ -64,16 +65,20 @@ public class ResumeService {
     }
 
     @Transactional
-    public List<Resume> saveBulkResumes(MultipartFile[] files, Long jobId, boolean isResumeBank) throws IOException {
+    public List<Resume> saveBulkResumes(MultipartFile[] files, Long jobId, boolean isResumeBank, User user) throws IOException {
         java.util.List<Resume> resumes = new java.util.ArrayList<>();
         for (MultipartFile file : files) {
-            resumes.add(saveResume(file, jobId, isResumeBank));
+            resumes.add(saveResume(file, jobId, isResumeBank, user));
         }
         return resumes;
     }
 
     public List<Resume> getAllResumes() {
         return resumeRepository.findAll();
+    }
+
+    public List<Resume> getAllResumesByUser(User user) {
+        return resumeRepository.findByUser(user);
     }
 
     public List<Resume> getResumesByType(boolean isResumeBank) {
@@ -116,6 +121,14 @@ public class ResumeService {
     public void deleteAllResumes() {
         List<Resume> allResumes = resumeRepository.findAll();
         for (Resume resume : allResumes) {
+            deleteResume(resume.getId());
+        }
+    }
+
+    @Transactional
+    public void deleteAllResumesByUser(User user) {
+        List<Resume> resumes = resumeRepository.findByUser(user);
+        for (Resume resume : resumes) {
             deleteResume(resume.getId());
         }
     }

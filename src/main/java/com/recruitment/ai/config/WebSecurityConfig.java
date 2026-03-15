@@ -55,11 +55,13 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/jobs/**").permitAll()
-                        .requestMatchers("/api/resumes/**").permitAll()
-                        .requestMatchers("/api/screening/**").permitAll()
-                        .requestMatchers("/api/settings/**").permitAll()
-                        .requestMatchers("/api/payments/**").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/jobs/**").hasAnyRole("HR", "ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/jobs/**").hasAnyRole("HR", "ADMIN")
+                        .requestMatchers("/api/jobs/**").authenticated()
+                        .requestMatchers("/api/resumes/**").authenticated()
+                        .requestMatchers("/api/screening/**").authenticated()
+                        .requestMatchers("/api/settings/**").authenticated()
+                        .requestMatchers("/api/payments/**").authenticated()
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated());
 

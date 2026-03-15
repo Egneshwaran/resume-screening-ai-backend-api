@@ -16,13 +16,16 @@ import java.util.Map;
 @Service
 public class MatchingService {
 
+    @org.springframework.beans.factory.annotation.Value("${ai.engine.url:http://localhost:8000}")
+    private String aiEngineUrl;
+
     @Autowired
     private MatchingScoreRepository matchingScoreRepository;
 
-
+    @Autowired
+    private RestTemplate restTemplate;
 
     public MatchingScore rankResumeForJob(Job job, Resume resume) {
-        RestTemplate restTemplate = new RestTemplate();
 
         Map<String, Object> request = new HashMap<>();
         request.put("job_description", job.getDescription());
@@ -38,9 +41,12 @@ public class MatchingService {
         try {
             ParameterizedTypeReference<Map<String, Object>> responseType = new ParameterizedTypeReference<Map<String, Object>>() {
             };
+            
+            String engineEndpoint = aiEngineUrl + "/process";
+            System.out.println("Calling AI Engine at: " + engineEndpoint);
 
             Map<String, Object> response = restTemplate.exchange(
-                    "http://localhost:8000/process",
+                    engineEndpoint,
                     HttpMethod.POST,
                     new HttpEntity<>(request),
                     responseType).getBody();

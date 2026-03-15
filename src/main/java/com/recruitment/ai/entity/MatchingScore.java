@@ -56,3 +56,4 @@ public class MatchingScore {
         createdAt = LocalDateTime.now();
     }
 }
+

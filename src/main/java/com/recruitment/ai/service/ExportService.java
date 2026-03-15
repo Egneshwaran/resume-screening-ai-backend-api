@@ -1,5 +1,6 @@
 package com.recruitment.ai.service;
 
+
 import com.lowagie.text.*;
 import com.lowagie.text.Font;
 import com.lowagie.text.pdf.PdfPCell;
@@ -22,8 +23,10 @@ import java.util.List;
 @Service
 public class ExportService {
 
+
     @Autowired
     private MatchingScoreRepository matchingScoreRepository;
+
 
     public ByteArrayInputStream exportToPdf(Long jobId) {
         List<MatchingScore> scores;
@@ -134,3 +137,4 @@ public class ExportService {
         }
     }
 }
+
